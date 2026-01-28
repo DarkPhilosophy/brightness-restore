@@ -6,7 +6,7 @@ import Adw from 'gi://Adw';
 
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-const BUILD_DATE = '2026-01-28T10:57:04.676Z';
+const BUILD_DATE = '2026-01-28T11:21:02.164Z';
 const CHANGELOG = `
 DUAL MODES & ROBUSTNESS
 

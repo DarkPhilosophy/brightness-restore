@@ -76,6 +76,10 @@ fi
 echo "Syncing version..."
 node .scripts/sync-version.js
 
+# Update EGO published version badge
+echo "Updating EGO published version badge..."
+node .scripts/fetch-ego-version.js
+
 # Update lint status in README
 echo "Updating lint status..."
 node .scripts/update-lint-status.js
