@@ -11,7 +11,7 @@ It automatically saves your local brightness adjustments and restores them upon 
 
 **Status**: **Live** on GNOME Extensions (ID: 9214).
 <!-- EGO-VERSION-START -->
-[![Status: Pending](https://img.shields.io/badge/Status-Pending-yellow)](https://extensions.gnome.org/extension/9214/brightness-restore/) ![GitHub](https://img.shields.io/badge/GitHub-v1-blue) ![GNOME](https://img.shields.io/badge/GNOME-v1-green)
+[![Status: Pending](https://img.shields.io/badge/Status-Pending-yellow)](https://extensions.gnome.org/extension/9214/brightness-restore/) ![GitHub](https://img.shields.io/badge/GitHub-v2-blue) ![GNOME](https://img.shields.io/badge/GNOME-N%2FA-gray)
 <!-- EGO-VERSION-END -->
 
 ## Features
@@ -27,7 +27,7 @@ It automatically saves your local brightness adjustments and restores them upon 
 <!-- LINT-RESULT-START -->
 ### Linting Status
 > **Status**: ✅ **Passing**  
-> **Last Updated**: 2026-01-28 11:21:03 UTC  
+> **Last Updated**: 2026-01-28 12:06:09 UTC  
 > **Summary**: 0 errors, 0 warnings
 
 <details>
