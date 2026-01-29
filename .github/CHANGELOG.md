@@ -1,5 +1,13 @@
 # Changelog
 
+## v3 (2026-01-29) - PREFERENCES & LOGGING REFINEMENTS
+
+> **PREFERENCES & LOGGING REFINEMENTS**
+
+- Attach the first real PreferencesPage to the window (avoids Adw warnings without dummy pages).
+- Logging UI: Open Log Folder + Clear Log File actions (shown only when debug + file logging enabled).
+- Log file path resolution now respects custom paths and defaults to cache directory when empty.
+
 ## v2 (2026-01-28) - DUAL MODES & ROBUSTNESS
 
 > **Major Update: Flexible UI & Robust Hardware Support**

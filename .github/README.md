@@ -11,7 +11,7 @@ It automatically saves your local brightness adjustments and restores them upon 
 
 **Status**: **Live** on GNOME Extensions (ID: 9214).
 <!-- EGO-VERSION-START -->
-[![Status: Pending](https://img.shields.io/badge/Status-Pending-yellow)](https://extensions.gnome.org/extension/9214/brightness-restore/) ![GitHub](https://img.shields.io/badge/GitHub-v2-blue) ![GNOME](https://img.shields.io/badge/GNOME-N%2FA-gray)
+[![Status: Pending](https://img.shields.io/badge/Status-Pending-yellow)](https://extensions.gnome.org/extension/9214/brightness-restore/) ![GitHub](https://img.shields.io/badge/GitHub-v3-blue) ![GNOME](https://img.shields.io/badge/GNOME-N%2FA-gray)
 <!-- EGO-VERSION-END -->
 
 ## Features
@@ -27,14 +27,14 @@ It automatically saves your local brightness adjustments and restores them upon 
 <!-- LINT-RESULT-START -->
 ### Linting Status
 > **Status**: ✅ **Passing**  
-> **Last Updated**: 2026-01-28 12:06:09 UTC  
+> **Last Updated**: 2026-01-29 14:55:54 UTC  
 > **Summary**: 0 errors, 0 warnings
 
 <details>
 <summary>Click to view full lint output</summary>
 
 ```
-> brightness-restore@2.0.0 lint:fix
+> brightness-restore@3.0.0 lint:fix
 > eslint --fix extension .scripts --format stylish
 ```
 
@@ -43,22 +43,11 @@ It automatically saves your local brightness adjustments and restores them upon 
 
 <!-- LATEST-VERSION-START -->
 <details open>
-<summary><strong>Latest Update (v2)</strong></summary>
+<summary><strong>Latest Update (v3)</strong></summary>
 
-- **Dual UI Modes**:
-  - **Quick Settings (Default)**: Integrated seamlessly into the status area pill (no slider, clean look).
-  - **Standalone**: Classic panel button with slider menu for direct control.
-- **Hybrid Hardware/Software Control**:
-  - Prioritizes `org.gnome.SettingsDaemon.Power` (DBus) for hardware control.
-  - Automatically falls back to `Main.brightnessManager` (Software) if hardware is unavailable.
-- **Preferences Refinement**:
-  - Reordered settings for better usability.
-  - Conditional visibility for position settings based on selected style.
-- **Conditional Watchdog**:
-  - Background monitoring process now **only** runs when "Debug Mode" is enabled.
-- **Robustness**: Fixed linting issues and duplicate code paths.
-- **Cleanup**: Removed unused artifacts and legacy battery/power components.
-- **Refactor**: Split monolithic UI logic into focused indicator modules for maintainability.
+- Attach the first real PreferencesPage to the window (avoids Adw warnings without dummy pages).
+- Logging UI: Open Log Folder + Clear Log File actions (shown only when debug + file logging enabled).
+- Log file path resolution now respects custom paths and defaults to cache directory when empty.
 
 </details>
 <!-- LATEST-VERSION-END -->

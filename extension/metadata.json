@@ -1,21 +1,15 @@
 {
   "description": "Restores brightness on login and provides persistent software brightness control for external monitors.",
-  "gettext-domain": "brightness-restore",
-  "settings-schema": "org.gnome.shell.extensions.brightness-restore",
-  "name": "Brightness Restore",
-  "uuid": "brightness-restore@DarkPhilosophy",
-  "shell-version": [
-    "45",
-    "46",
-    "47",
-    "48",
-    "49"
-  ],
-  "url": "https://github.com/DarkPhilosophy/brightness-restore",
-  "version": 2,
-  "version-name": "2",
   "donations": {
     "github": "DarkPhilosophy",
     "kofi": "darkphilosophy"
-  }
+  },
+  "gettext-domain": "brightness-restore",
+  "name": "Brightness Restore",
+  "settings-schema": "org.gnome.shell.extensions.brightness-restore",
+  "shell-version": ["45", "46", "47", "48", "49"],
+  "url": "https://github.com/DarkPhilosophy/brightness-restore",
+  "uuid": "brightness-restore@DarkPhilosophy",
+  "version": 3,
+  "version-name": "3"
 }

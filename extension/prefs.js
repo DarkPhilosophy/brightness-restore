@@ -3,48 +3,26 @@
 import Gio from 'gi://Gio';
 import Gtk from 'gi://Gtk';
 import Adw from 'gi://Adw';
+import GLib from 'gi://GLib';
 
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-const BUILD_DATE = '2026-01-28T12:06:08.553Z';
+const BUILD_DATE = '2026-01-29T14:55:53.295Z';
 const CHANGELOG = `
-DUAL MODES & ROBUSTNESS
+PREFERENCES & LOGGING REFINEMENTS
 
-Major Update: Flexible UI & Robust Hardware Support
+PREFERENCES & LOGGING REFINEMENTS
 
-Dual UI Modes:
+Attach the first real PreferencesPage to the window (avoids Adw warnings without dummy pages).
 
-Quick Settings (Default): Integrated seamlessly into the status area pill (no slider, clean look).
+Logging UI: Open Log Folder + Clear Log File actions (shown only when debug + file logging enabled).
 
-Standalone: Classic panel button with slider menu for direct control.
-
-Hybrid Hardware/Software Control:
-
-Prioritizes org.gnome.SettingsDaemon.Power (DBus) for hardware control.
-
-Automatically falls back to Main.brightnessManager (Software) if hardware is unavailable.
-
-Preferences Refinement:
-
-Reordered settings for better usability.
-
-Conditional visibility for position settings based on selected style.
-
-Conditional Watchdog:
-
-Background monitoring process now only runs when "Debug Mode" is enabled.
-
-Robustness: Fixed linting issues and duplicate code paths.
-
-Cleanup: Removed unused artifacts and legacy battery/power components.
-
-Refactor: Split monolithic UI logic into focused indicator modules for maintainability.`;
+Log file path resolution now respects custom paths and defaults to cache directory when empty.`;
 
 export default class BrightnessRestorePreferences extends ExtensionPreferences {
     _switchToNavigationSplitViews(window) {
-        // Add dummy Adw.PreferencesPage to avoid logs spamming
-        const dummyPrefsPage = new Adw.PreferencesPage();
-        window.add(dummyPrefsPage);
+        // Attach first real PreferencesPage to avoid Adw warnings
+        this._windowPageAdded = false;
 
         // Add AdwNavigationSplitView and componenents
         const splitView = new Adw.NavigationSplitView({
@@ -115,6 +93,11 @@ export default class BrightnessRestorePreferences extends ExtensionPreferences {
             stack.add_named(page, row._id);
             sidebarListBox.append(row);
 
+            if (!this._windowPageAdded) {
+                window.add(page); // attach real page to satisfy Adw.PreferencesWindow
+                this._windowPageAdded = true;
+            }
+
             if (!firstPageAdded) {
                 splitViewContent.set_title(row._title);
                 firstPageAdded = true;
@@ -159,6 +142,43 @@ export default class BrightnessRestorePreferences extends ExtensionPreferences {
                 icon_name: iconName,
             });
             row.add_prefix(icon);
+        };
+
+        const logBaseName = 'Brightness Restore'.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        const resolveLogPath = () => {
+            const configured = (settings.get_string('logfilepath') || '').trim();
+            let fullPath = '';
+            if (configured.length === 0) {
+                fullPath = `${GLib.get_user_cache_dir()}/${logBaseName}.log`;
+            } else if (configured.startsWith('/')) {
+                fullPath = configured;
+            } else {
+                fullPath = `${GLib.get_home_dir()}/${configured}`;
+            }
+
+            if (GLib.file_test(fullPath, GLib.FileTest.IS_DIR)) {
+                const base = fullPath.replace(/\/$/, '');
+                return `${base}/${logBaseName}.log`;
+            }
+
+            return fullPath;
+        };
+        const openFolderChooser = () => {
+            const dialog = new Gtk.FileChooserNative({
+                title: _('Select Log Folder'),
+                action: Gtk.FileChooserAction.SELECT_FOLDER,
+                transient_for: window,
+                modal: true,
+            });
+            dialog.connect('response', (d, response) => {
+                if (response === Gtk.ResponseType.ACCEPT) {
+                    const file = d.get_file();
+                    const folderPath = file ? file.get_path() : null;
+                    if (folderPath) settings.set_string('logfilepath', folderPath);
+                }
+                d.destroy();
+            });
+            dialog.show();
         };
 
         // === PAGE 1: GENERAL ===
@@ -394,17 +414,60 @@ export default class BrightnessRestorePreferences extends ExtensionPreferences {
             text: settings.get_string('logfilepath'),
             valign: Gtk.Align.CENTER,
         });
-        logPathEntry.connect('changed', () => settings.set_string('logfilepath', logPathEntry.get_text()));
+        settings.bind('logfilepath', logPathEntry, 'text', Gio.SettingsBindFlags.DEFAULT);
         logPathRow.add_suffix(logPathEntry);
+        const browseBtn = new Gtk.Button({
+            label: _('Browse'),
+            valign: Gtk.Align.CENTER,
+            icon_name: 'folder-open-symbolic',
+        });
+        browseBtn.connect('clicked', openFolderChooser);
+        logPathRow.add_suffix(browseBtn);
         loggingGroup.add(logPathRow);
+
+        const openReq = new Adw.ActionRow({ title: _('Open Log Folder') });
+        addIcon(openReq, 'folder-open-symbolic');
+        const openBtn = new Gtk.Button({
+            label: _('Open'),
+            valign: Gtk.Align.CENTER,
+            icon_name: 'folder-open-symbolic',
+        });
+        openBtn.connect('clicked', () => {
+            const path = resolveLogPath();
+            const folder = Gio.File.new_for_path(path).get_parent();
+            if (folder) Gio.AppInfo.launch_default_for_uri(folder.get_uri(), null);
+        });
+        openReq.add_suffix(openBtn);
+        loggingGroup.add(openReq);
+
+        const clearReq = new Adw.ActionRow({ title: _('Clear Log File') });
+        addIcon(clearReq, 'edit-delete-symbolic');
+        const clearBtn = new Gtk.Button({
+            label: _('Clear'),
+            valign: Gtk.Align.CENTER,
+            icon_name: 'user-trash-symbolic',
+        });
+        clearBtn.connect('clicked', () => {
+            try {
+                Gio.File.new_for_path(resolveLogPath()).delete(null);
+            } catch (_e) {
+                /* ignore */
+            }
+        });
+        clearReq.add_suffix(clearBtn);
+        loggingGroup.add(clearReq);
 
         debugPage.add(loggingGroup);
 
         // Visibility Logic for Debug
         const updateDebugVisibility = () => {
             const isDebug = settings.get_boolean('debug');
+            const logToFile = settings.get_boolean('logtofile');
             loggingGroup.visible = isDebug;
-            logPathRow.visible = isDebug && settings.get_boolean('logtofile');
+            logPathRow.visible = isDebug && logToFile;
+            browseBtn.visible = isDebug && logToFile;
+            openReq.visible = isDebug && logToFile;
+            clearReq.visible = isDebug && logToFile;
         };
         connectSignal(settings, 'changed::debug', updateDebugVisibility);
         connectSignal(settings, 'changed::logtofile', updateDebugVisibility);

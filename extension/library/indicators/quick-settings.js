@@ -38,12 +38,8 @@ export class BrightnessQuickSettingsIndicator {
 
         this._indicator.connectObject('notify::allocation', () => this._ensurePosition(), this);
 
-        try {
-            Main.panel.statusArea.quickSettings.addExternalIndicator(this._indicator);
-            Logger.debug('[QuickSettings] Indicator added to external indicators.');
-        } catch (e) {
-            Logger.error(`[QuickSettings] Failed to mount UI: ${e.message}`);
-        }
+        Main.panel.statusArea.quickSettings.addExternalIndicator(this._indicator);
+        Logger.debug('[QuickSettings] Indicator added to external indicators.');
 
         this._captureDefaultPosition();
         this._ensurePosition();
@@ -82,24 +78,20 @@ export class BrightnessQuickSettingsIndicator {
         const parent = actor.get_parent();
         if (!parent) return;
 
-        try {
-            if (pos === 'left') {
-                if (parent.set_child_above_sibling) {
-                    parent.set_child_above_sibling(actor, null);
-                } else if (parent.set_child_at_index) {
-                    parent.set_child_at_index(actor, 0);
-                }
-            } else if (pos === 'right') {
-                if (parent.set_child_below_sibling) {
-                    parent.set_child_below_sibling(actor, null);
-                } else if (parent.get_n_children) {
-                    parent.set_child_at_index(actor, Math.max(parent.get_n_children() - 1, 0));
-                }
-            } else if (this._defaultParent === parent && this._defaultIndex !== null && parent.get_n_children) {
-                parent.set_child_at_index(actor, Math.min(this._defaultIndex, parent.get_n_children() - 1));
+        if (pos === 'left') {
+            if (parent.set_child_above_sibling) {
+                parent.set_child_above_sibling(actor, null);
+            } else if (parent.set_child_at_index) {
+                parent.set_child_at_index(actor, 0);
             }
-        } catch (e) {
-            Logger.warn(`[QuickSettings] Failed to position indicator: ${e.message}`);
+        } else if (pos === 'right') {
+            if (parent.set_child_below_sibling) {
+                parent.set_child_below_sibling(actor, null);
+            } else if (parent.get_n_children) {
+                parent.set_child_at_index(actor, Math.max(parent.get_n_children() - 1, 0));
+            }
+        } else if (this._defaultParent === parent && this._defaultIndex !== null && parent.get_n_children) {
+            parent.set_child_at_index(actor, Math.min(this._defaultIndex, parent.get_n_children() - 1));
         }
     }
 }
