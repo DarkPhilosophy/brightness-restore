@@ -27,15 +27,15 @@ It automatically saves your local brightness adjustments and restores them upon 
 <!-- LINT-RESULT-START -->
 ### Linting Status
 > **Status**: ✅ **Passing**  
-> **Last Updated**: 2026-01-29 14:56:31 UTC  
+> **Last Updated**: 2026-02-28 18:34:56 UTC  
 > **Summary**: 0 errors, 0 warnings
 
 <details>
 <summary>Click to view full lint output</summary>
 
 ```
-> brightness-restore@3.0.0 lint:fix
-> eslint --fix extension .scripts --format stylish
+> brightness-restore@3.0.0 lint
+> eslint extension .scripts --format stylish
 ```
 
 </details>
