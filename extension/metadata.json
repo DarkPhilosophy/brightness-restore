@@ -7,7 +7,7 @@
     "gettext-domain": "brightness-restore",
     "name": "Brightness Restore",
     "settings-schema": "org.gnome.shell.extensions.brightness-restore",
-    "shell-version": ["45", "46", "47", "48", "49"],
+    "shell-version": ["45", "46", "47", "48", "49", "50"],
     "url": "https://github.com/DarkPhilosophy/brightness-restore",
     "uuid": "brightness-restore@DarkPhilosophy",
     "version": 3,
