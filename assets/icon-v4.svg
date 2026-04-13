@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Brightness Restore v4 icon</title>
+  <desc id="desc">Display icon with brightness sun and restore arrow for version four.</desc>
+  <defs>
+    <linearGradient id="screen" x1="48" x2="208" y1="52" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f766e"/>
+      <stop offset="1" stop-color="#164e63"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="84" x2="170" y1="70" y2="150" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fde68a"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="#0f172a"/>
+  <rect x="46" y="54" width="164" height="108" rx="22" fill="url(#screen)" stroke="#cbd5e1" stroke-width="10"/>
+  <path d="M92 188h72" fill="none" stroke="#94a3b8" stroke-linecap="round" stroke-width="12"/>
+  <path d="M108 92h40" fill="none" stroke="#fef3c7" stroke-linecap="round" stroke-width="10"/>
+  <circle cx="128" cy="108" r="22" fill="url(#sun)"/>
+  <path d="M174 94c18 5 30 21 30 39 0 22-18 40-40 40" fill="none" stroke="#67e8f9" stroke-linecap="round" stroke-width="12"/>
+  <path d="M174 94l-8 18 20-2" fill="none" stroke="#67e8f9" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"/>
+  <circle cx="196" cy="64" r="26" fill="#38bdf8"/>
+  <text x="196" y="72" fill="#ecfeff" font-family="Cantarell, Noto Sans, sans-serif" font-size="22" font-weight="700" text-anchor="middle">4</text>
+</svg>
