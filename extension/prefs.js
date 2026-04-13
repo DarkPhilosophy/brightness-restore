@@ -7,17 +7,13 @@ import GLib from 'gi://GLib';
 
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-const BUILD_DATE = '2026-04-13T01:07:00.816Z';
+const BUILD_DATE = '2026-04-13T01:19:47.060Z';
 const CHANGELOG = `
-PREFERENCES & LOGGING REFINEMENTS
+ICON REFRESH
 
-PREFERENCES & LOGGING REFINEMENTS
+ICON REFRESH
 
-Attach the first real PreferencesPage to the window (avoids Adw warnings without dummy pages).
-
-Logging UI: Open Log Folder + Clear Log File actions (shown only when debug + file logging enabled).
-
-Log file path resolution now respects custom paths and defaults to cache directory when empty.`;
+Add the new extension icon asset for the next release cycle.`;
 
 export default class BrightnessRestorePreferences extends ExtensionPreferences {
     _switchToNavigationSplitViews(window) {

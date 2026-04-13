@@ -1,5 +1,11 @@
 # Changelog
 
+## v4 (2026-04-13) - ICON REFRESH
+
+> **ICON REFRESH**
+
+- Add the new extension icon asset for the next release cycle.
+
 ## v3 (2026-01-29) - PREFERENCES & LOGGING REFINEMENTS
 
 > **PREFERENCES & LOGGING REFINEMENTS**

@@ -14,7 +14,7 @@ It automatically saves your local brightness adjustments and restores them upon 
 
 **Status**: **Live** on GNOME Extensions (ID: 9214).
 <!-- EGO-VERSION-START -->
-[![Status: Synced](https://img.shields.io/badge/Status-Synced-brightgreen)](https://extensions.gnome.org/extension/9214/brightness-restore/) ![GitHub](https://img.shields.io/badge/GitHub-v3-blue) ![GNOME](https://img.shields.io/badge/GNOME-v3-green)
+[![Status: Pending](https://img.shields.io/badge/Status-Pending-yellow)](https://extensions.gnome.org/extension/9214/brightness-restore/) ![GitHub](https://img.shields.io/badge/GitHub-v4-blue) ![GNOME](https://img.shields.io/badge/GNOME-v3-green)
 <!-- EGO-VERSION-END -->
 
 ## Features
@@ -36,7 +36,7 @@ It automatically saves your local brightness adjustments and restores them upon 
 <details>
 <summary>Click to view full lint output</summary>
 
-```
+```text
 > brightness-restore@3.0.0 lint:fix
 > eslint --fix extension .scripts --format stylish
 ```
@@ -46,11 +46,9 @@ It automatically saves your local brightness adjustments and restores them upon 
 
 <!-- LATEST-VERSION-START -->
 <details open>
-<summary><strong>Latest Update (v3)</strong></summary>
+<summary><strong>Latest Update (v4)</strong></summary>
 
-- Attach the first real PreferencesPage to the window (avoids Adw warnings without dummy pages).
-- Logging UI: Open Log Folder + Clear Log File actions (shown only when debug + file logging enabled).
-- Log file path resolution now respects custom paths and defaults to cache directory when empty.
+- Add the new extension icon asset for the next release cycle.
 
 </details>
 <!-- LATEST-VERSION-END -->
