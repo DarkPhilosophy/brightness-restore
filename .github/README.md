@@ -35,7 +35,7 @@ It automatically saves your local brightness adjustments and restores them upon 
 <details>
 <summary>Click to view full lint output</summary>
 
-```
+```text
 > brightness-restore@3.0.0 lint:fix
 > eslint --fix extension .scripts --format stylish
 ```
