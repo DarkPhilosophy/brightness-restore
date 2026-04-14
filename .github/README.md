@@ -30,7 +30,7 @@ It automatically saves your local brightness adjustments and restores them upon 
 <!-- LINT-RESULT-START -->
 ### Linting Status
 > **Status**: ✅ **Passing**  
-> **Last Updated**: 2026-04-14 04:54:53 UTC  
+> **Last Updated**: 2026-04-14 04:55:29 UTC  
 > **Summary**: 0 errors, 7 warnings
 
 <details>
@@ -38,10 +38,10 @@ It automatically saves your local brightness adjustments and restores them upon 
 
 ```
 > brightness-restore@4.0.0 lint:fix
-> eslint --fix extension .scripts --format stylish
+> eslint --fix extension .scripts --format stylish || true; echo LINT_DONE
 
 
-/var/home/alexa/Projects/brightness-restore/extension/extension.js
+/home/runner/work/brightness-restore/brightness-restore/extension/extension.js
   19:1  warning  Missing JSDoc @returns declaration           jsdoc/require-returns
   21:1  warning  Missing JSDoc @param "priority" description  jsdoc/require-param-description
   21:1  warning  Missing JSDoc @param "priority" type         jsdoc/require-param-type
@@ -51,6 +51,8 @@ It automatically saves your local brightness adjustments and restores them upon 
   23:1  warning  Missing JSDoc @param "callback" type         jsdoc/require-param-type
 
 ✖ 7 problems (0 errors, 7 warnings)
+
+LINT_DONE
 ```
 
 </details>
