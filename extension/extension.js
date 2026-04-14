@@ -16,6 +16,23 @@ import {
     setLastBrightness,
 } from './library/settings.js';
 
+/**
+ *
+ * @param priority
+ * @param delayMs
+ * @param callback
+ */
+function scheduleTimeoutOnce(priority, delayMs, callback) {
+    if (typeof GLib.timeout_add_once === 'function') {
+        return GLib.timeout_add_once(priority, delayMs, callback);
+    }
+
+    return GLib.timeout_add(priority, delayMs, () => {
+        callback();
+        return GLib.SOURCE_REMOVE;
+    });
+}
+
 export default class BrightnessRestoreExtension extends Extension {
     enable() {
         this._settings = this.getSettings();
@@ -48,9 +65,9 @@ export default class BrightnessRestoreExtension extends Extension {
 
         // Connect Brightness & Restore
         // Wait for system to settle slightly
-        this._timeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
+        this._timeoutId = scheduleTimeoutOnce(GLib.PRIORITY_DEFAULT, 1000, () => {
+            this._timeoutId = null;
             this._connectBrightness();
-            return GLib.SOURCE_REMOVE;
         });
     }
 
@@ -78,51 +95,47 @@ export default class BrightnessRestoreExtension extends Extension {
     }
 
     async _connectBrightness() {
-        // HYBRID MODE: Try Hardware (DBus) -> Fallback to Software (Main.brightnessManager)
-
-        // Try Hardware (org.gnome.SettingsDaemon.Power.Screen)
-        try {
-            this._mode = 'hardware';
-            this._proxy = new Gio.DBusProxy({
-                g_connection: Gio.DBus.session,
-                g_name: 'org.gnome.SettingsDaemon.Power',
-                g_object_path: '/org/gnome/SettingsDaemon/Power',
-                g_interface_name: 'org.gnome.SettingsDaemon.Power.Screen',
-                g_flags: Gio.DBusProxyFlags.NONE,
-            });
-
-            // Initialize connection
-            await this._proxy.init_async(GLib.PRIORITY_DEFAULT, null);
-
-            // Validate: Must have 'Brightness' property
-            const brightness = this._proxy.get_cached_property('Brightness');
-            if (brightness === null) {
-                throw new Error('No Brightness property on DBus interface');
-            }
-
-            Logger.info(`Connected via DBus (Hardware). Current Brightness: ${brightness.get_int32()}%`);
-
-            this._proxyId = this._proxy.connect('g-properties-changed', () => this._onChanged());
-        } catch (e) {
-            Logger.warn(`Hardware (DBus) connection failed: ${e.message}. Falling back to Software.`);
-            this._proxy = null;
+        // GNOME 49+ moved monitor brightness management into Main.brightnessManager.
+        const bm = Main.brightnessManager;
+        if (bm?.globalScale) {
             this._mode = 'software';
-        }
-
-        // Fallback to Software if Hardware failed
-        if (this._mode === 'software') {
-            const bm = Main.brightnessManager;
-            if (!bm || !bm.globalScale) {
-                Logger.warn('Software (Main.brightnessManager) NOT available.');
-                if (this._ui) this._ui.update('Err', 0);
-                this._proxy = null;
-                return;
-            }
-
             this._proxy = bm.globalScale;
             Logger.info(`Connected via Main.brightnessManager (Software). Current Value: ${this._proxy.value}`);
-
             this._proxyId = this._proxy.connect('notify::value', () => this._onChanged());
+        }
+
+        // Older shells still expose the gsd D-Bus interface.
+        if (!this._proxy) {
+            try {
+                this._mode = 'hardware';
+                this._proxy = new Gio.DBusProxy({
+                    g_connection: Gio.DBus.session,
+                    g_name: 'org.gnome.SettingsDaemon.Power',
+                    g_object_path: '/org/gnome/SettingsDaemon/Power',
+                    g_interface_name: 'org.gnome.SettingsDaemon.Power.Screen',
+                    g_flags: Gio.DBusProxyFlags.NONE,
+                });
+
+                await this._proxy.init_async(GLib.PRIORITY_DEFAULT, null);
+
+                const brightness = this._proxy.get_cached_property('Brightness');
+                if (brightness === null) {
+                    throw new Error('No Brightness property on DBus interface');
+                }
+
+                Logger.info(`Connected via DBus (Hardware). Current Brightness: ${brightness.get_int32()}%`);
+                this._proxyId = this._proxy.connect('g-properties-changed', () => this._onChanged());
+            } catch (e) {
+                Logger.warn(`Brightness connection failed: ${e.message}.`);
+                this._proxy = null;
+                this._mode = null;
+            }
+        }
+
+        if (!this._proxy) {
+            Logger.warn('No usable brightness backend found.');
+            if (this._ui) this._ui.update('Err', 0);
+            return;
         }
 
         // Perform Logic (Restore & Watchdog)
@@ -228,8 +241,8 @@ export default class BrightnessRestoreExtension extends Extension {
     _saveBrightness(value) {
         // Save to GSettings (Debounced)
         if (this._saveTimeoutId) GLib.source_remove(this._saveTimeoutId);
-        this._saveTimeoutId = GLib.timeout_add(GLib.PRIORITY_LOW, 1000, () => {
-            if (!this._settings) return GLib.SOURCE_REMOVE; // Safety check
+        this._saveTimeoutId = scheduleTimeoutOnce(GLib.PRIORITY_LOW, 1000, () => {
+            if (!this._settings) return; // Safety check
 
             const stored = getLastBrightness(this._settings);
             if (Math.abs(stored - value) > 0.01) {
@@ -237,7 +250,6 @@ export default class BrightnessRestoreExtension extends Extension {
                 setLastBrightness(this._settings, value);
             }
             this._saveTimeoutId = null;
-            return GLib.SOURCE_REMOVE;
         });
     }
 

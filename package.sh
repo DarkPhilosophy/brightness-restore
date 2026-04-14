@@ -38,7 +38,7 @@ node .scripts/update-lint-status.js
 # Validate File Structure
 node .scripts/validate-build.js
 
-echo "🏗️  Building Batt-Watt Power Monitor extension package..."
+echo "🏗️  Building Brightness Restore extension package..."
 
 # Extension details
 EXTENSION_UUID="brightness-restore@DarkPhilosophy"
