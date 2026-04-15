@@ -7,7 +7,7 @@ import GLib from 'gi://GLib';
 
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-const BUILD_DATE = '2026-04-15T16:36:38.171Z';
+const BUILD_DATE = '2026-04-15T16:38:07.590Z';
 const CHANGELOG = `
 ICON REFRESH
 
