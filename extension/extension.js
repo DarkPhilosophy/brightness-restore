@@ -17,10 +17,12 @@ import {
 } from './library/settings.js';
 
 /**
+ * Schedule a one-shot timeout with fallback for older GLib APIs.
  *
- * @param priority
- * @param delayMs
- * @param callback
+ * @param {number} priority - GLib priority for the timeout source.
+ * @param {number} delayMs - Delay in milliseconds before running the callback.
+ * @param {() => void} callback - Function to execute once when the timeout fires.
+ * @returns {number} GLib source ID for the scheduled timeout.
  */
 function scheduleTimeoutOnce(priority, delayMs, callback) {
     if (typeof GLib.timeout_add_once === 'function') {
