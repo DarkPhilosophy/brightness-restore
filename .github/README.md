@@ -30,8 +30,8 @@ It automatically saves your local brightness adjustments and restores them upon 
 <!-- LINT-RESULT-START -->
 ### Linting Status
 > **Status**: ✅ **Passing**  
-> **Last Updated**: 2026-04-14 04:55:29 UTC  
-> **Summary**: 0 errors, 7 warnings
+> **Last Updated**: 2026-04-15 15:29:05 UTC  
+> **Summary**: 0 errors, 0 warnings
 
 <details>
 <summary>Click to view full lint output</summary>
@@ -39,18 +39,6 @@ It automatically saves your local brightness adjustments and restores them upon 
 ```
 > brightness-restore@4.0.0 lint:fix
 > eslint --fix extension .scripts --format stylish || true; echo LINT_DONE
-
-
-/home/runner/work/brightness-restore/brightness-restore/extension/extension.js
-  19:1  warning  Missing JSDoc @returns declaration           jsdoc/require-returns
-  21:1  warning  Missing JSDoc @param "priority" description  jsdoc/require-param-description
-  21:1  warning  Missing JSDoc @param "priority" type         jsdoc/require-param-type
-  22:1  warning  Missing JSDoc @param "delayMs" description   jsdoc/require-param-description
-  22:1  warning  Missing JSDoc @param "delayMs" type          jsdoc/require-param-type
-  23:1  warning  Missing JSDoc @param "callback" description  jsdoc/require-param-description
-  23:1  warning  Missing JSDoc @param "callback" type         jsdoc/require-param-type
-
-✖ 7 problems (0 errors, 7 warnings)
 
 LINT_DONE
 ```
