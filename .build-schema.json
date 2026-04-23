@@ -1,4 +1,4 @@
 {
   "allowed_directories": ["schemas", "library", "library/indicators"],
-  "allowed_files": ["extension.js", "prefs.js", "metadata.json", "schemas/org.gnome.shell.extensions.brightness-restore.gschema.xml", "library/label.js", "library/logger.js", "library/settings.js", "library/indicators/panel.js", "library/indicators/quick-settings.js"]
+  "allowed_files": ["extension.js", "prefs.js", "metadata.json", "schemas/org.gnome.shell.extensions.brightness-restore.gschema.xml", "library/label.js", "library/logger.js", "library/settings.js", "library/screen-off.js", "library/idle-monitor.js", "library/toggle-mouse.js", "library/indicators/panel.js", "library/indicators/quick-settings.js", "library/indicators/screen-off-overlay.js"]
 }

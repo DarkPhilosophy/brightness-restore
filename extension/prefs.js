@@ -6,14 +6,23 @@ import Adw from 'gi://Adw';
 import GLib from 'gi://GLib';
 
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import * as Logger from './library/logger.js';
 
-const BUILD_DATE = '2026-04-15T16:38:07.590Z';
+const BUILD_DATE = '2026-04-23T04:55:10.564Z';
 const CHANGELOG = `
-ICON REFRESH
+ICON REFRESH & SCREEN CONTROL
 
-ICON REFRESH
+ICON REFRESH & SCREEN CONTROL
 
-Add the new extension icon asset for the next release cycle.`;
+Add the new extension icon asset for the next release cycle.
+
+Add Idle Screen Timeout settings and runtime screen-off actions.
+
+Add 10-second timeout option for fast testing from preferences.
+
+Add manual Screen Control test path handled by the shell process.
+
+Fix overlay and D-Bus wake/sleep behavior to avoid freezes and delayed triggers.`;
 
 export default class BrightnessRestorePreferences extends ExtensionPreferences {
     _switchToNavigationSplitViews(window) {
@@ -215,6 +224,93 @@ export default class BrightnessRestorePreferences extends ExtensionPreferences {
         behaviorGroup.add(intervalRow);
 
         generalPage.add(behaviorGroup);
+
+        // Group: Idle Timeout
+        const idleGroup = new Adw.PreferencesGroup({
+            title: _('Idle Screen Timeout'),
+            description: _('Blank screen after idle period'),
+        });
+
+        const idleEnableRow = new Adw.ActionRow({
+            title: _('Enable Idle Timeout'),
+            subtitle: _('Automatically blank screen after idle period'),
+        });
+        addIcon(idleEnableRow, 'preferences-system-time-symbolic');
+        const idleEnableSwitch = new Gtk.Switch({
+            active: settings.get_boolean('idle-timeout-enabled'),
+            valign: Gtk.Align.CENTER,
+        });
+        settings.bind('idle-timeout-enabled', idleEnableSwitch, 'active', Gio.SettingsBindFlags.DEFAULT);
+        idleEnableRow.add_suffix(idleEnableSwitch);
+        idleGroup.add(idleEnableRow);
+
+        // Idle Timeout Duration
+        const idleTimeoutRow = new Adw.ActionRow({
+            title: _('Idle Duration'),
+            subtitle: _('Time before screen blanks'),
+        });
+        addIcon(idleTimeoutRow, 'preferences-system-time-symbolic');
+        const timeoutModel = Gtk.StringList.new([
+            _('10 seconds'),
+            _('1 minute'),
+            _('2 minutes'),
+            _('5 minutes'),
+            _('10 minutes'),
+            _('15 minutes'),
+            _('30 minutes'),
+        ]);
+        // Values in seconds corresponding to each option
+        const timeoutValues = [10, 60, 120, 300, 600, 900, 1800];
+        const currentTimeout = settings.get_int('idle-timeout-seconds');
+        let timeoutIndex = timeoutValues.indexOf(currentTimeout);
+        if (timeoutIndex < 0) timeoutIndex = timeoutValues.indexOf(300); // Default to 5 minutes
+        const idleTimeoutDropDown = new Gtk.DropDown({
+            valign: Gtk.Align.CENTER,
+            model: timeoutModel,
+        });
+        idleTimeoutDropDown.set_selected(timeoutIndex);
+        idleTimeoutDropDown.connect('notify::selected', widget => {
+            const idx = widget.get_selected();
+            if (idx >= 0 && idx < timeoutValues.length) {
+                settings.set_int('idle-timeout-seconds', timeoutValues[idx]);
+            }
+        });
+        idleTimeoutRow.add_suffix(idleTimeoutDropDown);
+        idleGroup.add(idleTimeoutRow);
+
+        // Idle Action
+        const idleActionRow = new Adw.ActionRow({
+            title: _('Timeout Action'),
+            subtitle: _('How to blank the screen'),
+        });
+        addIcon(idleActionRow, 'display-brightness-symbolic');
+        const actionModel = Gtk.StringList.new([_('Black Overlay (Cairo)'), _('D-Bus (Mutter PowerSave)')]);
+        const idleActionDropDown = new Gtk.DropDown({
+            valign: Gtk.Align.CENTER,
+            model: actionModel,
+        });
+        // 'overlay' = 0, 'dbus' = 1
+        const actionMap = { overlay: 0, dbus: 1 };
+        const currentAction = settings.get_string('idle-timeout-action');
+        idleActionDropDown.set_selected(actionMap[currentAction] !== undefined ? actionMap[currentAction] : 0);
+        idleActionDropDown.connect('notify::selected', widget => {
+            const idx = widget.get_selected();
+            const val = idx === 0 ? 'overlay' : 'dbus';
+            settings.set_string('idle-timeout-action', val);
+        });
+        idleActionRow.add_suffix(idleActionDropDown);
+        idleGroup.add(idleActionRow);
+
+        // Visibility: only show timeout options when enabled
+        const updateIdleVisibility = () => {
+            const enabled = settings.get_boolean('idle-timeout-enabled');
+            idleTimeoutRow.visible = enabled;
+            idleActionRow.visible = enabled;
+        };
+        connectSignal(settings, 'changed::idle-timeout-enabled', updateIdleVisibility);
+        updateIdleVisibility();
+
+        generalPage.add(idleGroup);
 
         // === PAGE 2: APPEARANCE (Brightness) ===
         const appearancePage = new Adw.PreferencesPage({
@@ -453,12 +549,59 @@ export default class BrightnessRestorePreferences extends ExtensionPreferences {
         clearReq.add_suffix(clearBtn);
         loggingGroup.add(clearReq);
 
+        // Screen Control Group
+        const screenControlGroup = new Adw.PreferencesGroup({
+            title: _('Screen Control'),
+            description: _('Run screen tests in the GNOME Shell process'),
+        });
+
+        const screenModeRow = new Adw.ActionRow({
+            title: _('Test Mode'),
+            subtitle: _('Which screen-off mode to test'),
+        });
+        addIcon(screenModeRow, 'display-symbolic');
+        const screenModeModel = Gtk.StringList.new([_('Black Overlay (Cairo)'), _('D-Bus (Mutter)')]);
+        const screenModeDropDown = new Gtk.DropDown({
+            valign: Gtk.Align.CENTER,
+            model: screenModeModel,
+        });
+        const screenActionMap = { overlay: 0, dbus: 1 };
+        const currentScreenTestAction = settings.get_string('screen-test-action');
+        screenModeDropDown.set_selected(screenActionMap[currentScreenTestAction] ?? 0);
+        screenModeDropDown.connect('notify::selected', widget => {
+            const idx = widget.get_selected();
+            settings.set_string('screen-test-action', idx === 1 ? 'dbus' : 'overlay');
+        });
+        screenModeRow.add_suffix(screenModeDropDown);
+        screenControlGroup.add(screenModeRow);
+
+        const screenOffRow = new Adw.ActionRow({
+            title: _('Screen Off'),
+            subtitle: _('Run the selected test mode immediately'),
+        });
+        addIcon(screenOffRow, 'display-off-symbolic');
+        const screenOffBtn = new Gtk.Button({
+            label: _('Blank Screen'),
+            valign: Gtk.Align.CENTER,
+            icon_name: 'display-brightness-symbolic',
+        });
+        screenOffBtn.connect('clicked', () => {
+            const action = screenModeDropDown.get_selected() === 1 ? 'dbus' : 'overlay';
+            settings.set_string('screen-test-action', action);
+            settings.set_int('screen-test-sequence', settings.get_int('screen-test-sequence') + 1);
+            Logger.info(`Screen Control: Requested ${action} mode test`);
+        });
+        screenOffRow.add_suffix(screenOffBtn);
+        screenControlGroup.add(screenOffRow);
+
+        debugPage.add(screenControlGroup);
         debugPage.add(loggingGroup);
 
         // Visibility Logic for Debug
         const updateDebugVisibility = () => {
             const isDebug = settings.get_boolean('debug');
             const logToFile = settings.get_boolean('logtofile');
+            screenControlGroup.visible = isDebug;
             loggingGroup.visible = isDebug;
             logPathRow.visible = isDebug && logToFile;
             browseBtn.visible = isDebug && logToFile;

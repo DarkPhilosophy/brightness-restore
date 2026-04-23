@@ -14,7 +14,14 @@ import {
     isDebugEnabled,
     isRestoreOnStartup,
     setLastBrightness,
+    isIdleTimeoutEnabled,
+    getIdleTimeoutSeconds,
+    getIdleTimeoutAction,
+    getScreenTestAction,
 } from './library/settings.js';
+import { startIdleMonitoring, startWakeMonitoring, stopIdleMonitor } from './library/idle-monitor.js';
+import { screenOff, screenOn } from './library/screen-off.js';
+import { showOverlay, hideOverlay, destroyOverlay } from './library/indicators/screen-off-overlay.js';
 
 /**
  * Schedule a one-shot timeout with fallback for older GLib APIs.
@@ -62,8 +69,15 @@ export default class BrightnessRestoreExtension extends Extension {
                 this._teardownUI();
                 this._setupUI();
                 this._onChanged(); // Refresh value
+            } else if (['idle-timeout-enabled', 'idle-timeout-seconds', 'idle-timeout-action'].includes(key)) {
+                this._setupIdleMonitor();
+            } else if (key === 'screen-test-sequence') {
+                this._runScreenAction(getScreenTestAction(this._settings), 'manual');
             }
         });
+
+        // Setup Idle Monitor
+        this._setupIdleMonitor();
 
         // Connect Brightness & Restore
         // Wait for system to settle slightly
@@ -287,9 +301,88 @@ export default class BrightnessRestoreExtension extends Extension {
         });
     }
 
+    _setupIdleMonitor() {
+        if (!this._settings) return;
+
+        // Stop any existing idle monitor
+        stopIdleMonitor();
+        this._restoreScreenAction();
+
+        if (!isIdleTimeoutEnabled(this._settings)) {
+            Logger.debug('Idle monitor disabled');
+            return;
+        }
+
+        const timeoutSeconds = getIdleTimeoutSeconds(this._settings);
+        const action = getIdleTimeoutAction(this._settings);
+
+        Logger.info(`Idle monitor: ${timeoutSeconds}s, action=${action}`);
+
+        startIdleMonitoring(
+            timeoutSeconds,
+            () => {
+                this._onIdleTimeout();
+            },
+            () => {
+                this._onUserActive();
+            },
+        );
+    }
+
+    _onIdleTimeout() {
+        if (!this._settings) return;
+
+        const action = getIdleTimeoutAction(this._settings);
+        Logger.info(`Idle timeout triggered: action=${action}`);
+
+        this._runScreenAction(action, 'idle');
+    }
+
+    _runScreenAction(action, source = 'unknown') {
+        this._lastScreenAction = action;
+        Logger.info(`Screen action requested: action=${action} source=${source}`);
+
+        if (action === 'overlay') {
+            showOverlay();
+            if (source === 'manual') {
+                startWakeMonitoring(() => this._onUserActive());
+            }
+            return;
+        }
+
+        if (action === 'dbus') {
+            screenOff();
+            if (source === 'manual') {
+                startWakeMonitoring(() => this._onUserActive());
+            }
+        }
+    }
+
+    _restoreScreenAction() {
+        const lastAction = this._lastScreenAction;
+        this._lastScreenAction = null;
+
+        hideOverlay();
+
+        if (lastAction === 'dbus') {
+            screenOn();
+        }
+    }
+
+    _onUserActive() {
+        if (!this._settings) return;
+
+        Logger.info(`User activity detected after action=${this._lastScreenAction ?? 'none'}`);
+        this._restoreScreenAction();
+    }
     disable() {
         Logger.info('Disabling Brightness Restore...');
         this._teardownUI();
+
+        // Cleanup idle monitor
+        stopIdleMonitor();
+        this._restoreScreenAction();
+        destroyOverlay();
 
         if (this._settingsSignal) {
             this._settings.disconnect(this._settingsSignal);

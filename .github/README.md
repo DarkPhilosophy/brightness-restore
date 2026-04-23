@@ -2,8 +2,7 @@
 
 [![Extension CI](https://github.com/DarkPhilosophy/brightness-restore/actions/workflows/ci.yml/badge.svg)](https://github.com/DarkPhilosophy/brightness-restore/actions/workflows/ci.yml)
 ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/DarkPhilosophy/brightness-restore?utm_source=oss&utm_medium=github&utm_campaign=DarkPhilosophy%2Fbrightness-restore&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
-[![GNOME Extensions](https://img.shields.io/badge/GNOME-Extensions-orange.svg)](https://extensions.gnome.org/extension/9214/brightness-restore/) <!-- GNOME-SHELL-VERSIONS-START --> [![GNOME 45-50](https://img.shields.io/badge/GNOME-45--50-blue.svg)](https://www.gnome.org/) <!-- GNOME-SHELL-VERSIONS-END -->
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![GNOME Extensions](https://img.shields.io/badge/GNOME-Extensions-orange.svg)](https://extensions.gnome.org/extension/9214/brightness-restore/) <!-- GNOME-SHELL-VERSIONS-START --> [![GNOME 45-50](https://img.shields.io/badge/GNOME-45--50-blue.svg)](https://www.gnome.org/) <!-- GNOME-SHELL-VERSIONS-END --> [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 **Brightness Restore** - A GNOME Shell extension that solves the "missing persistence" issue for software brightness controls (especially on external monitors combined with OLED/Wayland setups).
 
@@ -27,7 +26,7 @@ It automatically saves your local brightness adjustments and restores them upon 
 <!-- LINT-RESULT-START -->
 ### Linting Status
 > **Status**: ✅ **Passing**  
-> **Last Updated**: 2026-04-15 16:38:09 UTC  
+> **Last Updated**: 2026-04-23 04:55:12 UTC  
 > **Summary**: 0 errors, 0 warnings
 
 <details>
@@ -48,6 +47,10 @@ LINT_DONE
 <summary><strong>Latest Update (v4)</strong></summary>
 
 - Add the new extension icon asset for the next release cycle.
+- Add Idle Screen Timeout settings and runtime screen-off actions.
+- Add 10-second timeout option for fast testing from preferences.
+- Add manual Screen Control test path handled by the shell process.
+- Fix overlay and D-Bus wake/sleep behavior to avoid freezes and delayed triggers.
 
 </details>
 <!-- LATEST-VERSION-END -->
