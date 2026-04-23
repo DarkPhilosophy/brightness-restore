@@ -8,21 +8,21 @@ import GLib from 'gi://GLib';
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 import * as Logger from './library/logger.js';
 
-const BUILD_DATE = '2026-04-15T23:16:37.875Z';
+const BUILD_DATE = '2026-04-23T04:30:30.967Z';
 const CHANGELOG = `
-ICON REFRESH
+ICON REFRESH & SCREEN CONTROL
 
-ICON REFRESH
+ICON REFRESH & SCREEN CONTROL
 
 Add the new extension icon asset for the next release cycle.
 
-2026-04-16: add Idle Screen Timeout settings and runtime screen-off actions.
+Add Idle Screen Timeout settings and runtime screen-off actions.
 
-2026-04-16: add 10-second timeout option for fast testing from preferences.
+Add 10-second timeout option for fast testing from preferences.
 
-2026-04-16: add manual Screen Control test path handled by the shell process.
+Add manual Screen Control test path handled by the shell process.
 
-2026-04-16: fix overlay and D-Bus wake/sleep behavior to avoid freezes and delayed triggers.`;
+Fix overlay and D-Bus wake/sleep behavior to avoid freezes and delayed triggers.`;
 
 export default class BrightnessRestorePreferences extends ExtensionPreferences {
     _switchToNavigationSplitViews(window) {
