@@ -8,7 +8,9 @@ let _overlay = null;
 let _monitorsChangedId = 0;
 
 /**
+ * Sync the overlay size to the current stage geometry.
  *
+ * @returns {void}
  */
 function syncOverlayGeometry() {
     if (!_overlay) return;
@@ -22,7 +24,9 @@ function syncOverlayGeometry() {
 }
 
 /**
+ * Create the overlay widget on demand and ensure its geometry is current.
  *
+ * @returns {void}
  */
 function ensureOverlay() {
     if (_overlay) {
@@ -44,7 +48,9 @@ function ensureOverlay() {
 }
 
 /**
+ * Show the full-screen black overlay and hide the mouse cursor.
  *
+ * @returns {void}
  */
 export function showOverlay() {
     ensureOverlay();
@@ -63,7 +69,9 @@ export function showOverlay() {
 }
 
 /**
+ * Hide the overlay and restore the mouse cursor.
  *
+ * @returns {void}
  */
 export function hideOverlay() {
     if (!_overlay) return;
@@ -77,7 +85,9 @@ export function hideOverlay() {
 }
 
 /**
+ * Fully destroy the overlay widget and its monitor listener.
  *
+ * @returns {void}
  */
 export function destroyOverlay() {
     hideOverlay();
@@ -94,7 +104,9 @@ export function destroyOverlay() {
 }
 
 /**
+ * Check whether the overlay is currently visible.
  *
+ * @returns {boolean} True when the overlay is visible.
  */
 export function isOverlayVisible() {
     return Boolean(_overlay?.visible);

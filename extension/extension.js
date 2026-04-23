@@ -306,7 +306,7 @@ export default class BrightnessRestoreExtension extends Extension {
 
         // Stop any existing idle monitor
         stopIdleMonitor();
-        hideOverlay();
+        this._restoreScreenAction();
 
         if (!isIdleTimeoutEnabled(this._settings)) {
             Logger.debug('Idle monitor disabled');
@@ -358,15 +358,22 @@ export default class BrightnessRestoreExtension extends Extension {
         }
     }
 
+    _restoreScreenAction() {
+        const lastAction = this._lastScreenAction;
+        this._lastScreenAction = null;
+
+        hideOverlay();
+
+        if (lastAction === 'dbus') {
+            screenOn();
+        }
+    }
+
     _onUserActive() {
         if (!this._settings) return;
 
         Logger.info(`User activity detected after action=${this._lastScreenAction ?? 'none'}`);
-        hideOverlay();
-
-        if (this._lastScreenAction === 'dbus') {
-            screenOn();
-        }
+        this._restoreScreenAction();
     }
     disable() {
         Logger.info('Disabling Brightness Restore...');
@@ -374,6 +381,7 @@ export default class BrightnessRestoreExtension extends Extension {
 
         // Cleanup idle monitor
         stopIdleMonitor();
+        this._restoreScreenAction();
         destroyOverlay();
 
         if (this._settingsSignal) {

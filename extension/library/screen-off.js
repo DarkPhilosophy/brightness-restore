@@ -18,8 +18,10 @@ const POWER_MODE_ON = 0;
 const POWER_MODE_OFF = 3;
 
 /**
+ * Apply a Mutter PowerSaveMode value asynchronously over D-Bus.
  *
- * @param mode
+ * @param {number} mode - PowerSaveMode value to apply.
+ * @returns {boolean} True when the async request was launched successfully.
  */
 function setPowerSaveModeAsync(mode) {
     try {

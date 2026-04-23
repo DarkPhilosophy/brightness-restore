@@ -10,7 +10,9 @@ let _idleTriggered = false;
 let _lastIdleMs = 0;
 
 /**
+ * Resolve the GNOME Shell idle monitor implementation for the current shell.
  *
+ * @returns {object|null} Idle monitor object when available, otherwise null.
  */
 function getIdleMonitor() {
     if (global.backend?.get_core_idle_monitor) {
@@ -25,7 +27,9 @@ function getIdleMonitor() {
 }
 
 /**
+ * Read the current idle time in milliseconds.
  *
+ * @returns {number} Idle time in milliseconds, or 0 when unavailable.
  */
 function getIdleTimeMs() {
     const monitor = getIdleMonitor();
@@ -39,8 +43,9 @@ function getIdleTimeMs() {
 }
 
 /**
+ * Stop a GLib timeout source if it is active.
  *
- * @param id
+ * @param {number} id - GLib source ID returned by timeout_add.
  */
 function stopPoll(id) {
     if (id > 0) {
@@ -49,7 +54,9 @@ function stopPoll(id) {
 }
 
 /**
+ * Stop all idle and wake monitoring state.
  *
+ * @returns {void}
  */
 export function stopIdleMonitor() {
     Logger.debug(`IdleMonitor: stop idlePoll=${_idlePollId} wakePoll=${_wakePollId} triggered=${_idleTriggered}`);
@@ -65,8 +72,10 @@ export function stopIdleMonitor() {
 }
 
 /**
+ * Start polling for user activity after a screen-off action has fired.
  *
- * @param activeCallback
+ * @param {() => void} activeCallback - Callback invoked when activity is detected.
+ * @returns {void}
  */
 export function startWakeMonitoring(activeCallback) {
     stopPoll(_wakePollId);
@@ -91,10 +100,12 @@ export function startWakeMonitoring(activeCallback) {
 }
 
 /**
+ * Start idle monitoring and invoke callbacks when the threshold is crossed.
  *
- * @param timeoutSeconds
- * @param idleCallback
- * @param activeCallback
+ * @param {number} timeoutSeconds - Idle threshold in seconds before triggering.
+ * @param {() => void} idleCallback - Callback invoked when the idle threshold is reached.
+ * @param {() => void | null} activeCallback - Callback invoked when activity resumes.
+ * @returns {void}
  */
 export function startIdleMonitoring(timeoutSeconds, idleCallback, activeCallback = null) {
     stopIdleMonitor();
@@ -110,11 +121,12 @@ export function startIdleMonitoring(timeoutSeconds, idleCallback, activeCallback
 
         if (!_idleTriggered && idleMs >= _idleTimeoutMs) {
             _idleTriggered = true;
+            _lastIdleMs = idleMs;
             Logger.info(`IdleMonitor: threshold reached idleMs=${idleMs} timeoutMs=${_idleTimeoutMs}`);
             if (_idleCallback) {
                 _idleCallback();
             }
-        } else if (_idleTriggered && idleMs < 1000) {
+        } else if (_idleTriggered && idleMs < _lastIdleMs) {
             _idleTriggered = false;
             Logger.info(`IdleMonitor: activity detected after trigger idleMs=${idleMs}`);
             if (_activeCallback) {
@@ -122,12 +134,16 @@ export function startIdleMonitoring(timeoutSeconds, idleCallback, activeCallback
             }
         }
 
+        _lastIdleMs = idleMs;
+
         return GLib.SOURCE_CONTINUE;
     });
 }
 
 /**
+ * Check whether idle monitoring is currently active.
  *
+ * @returns {boolean} True when the idle monitor poll is active.
  */
 export function isIdleMonitoringActive() {
     return _idlePollId > 0;

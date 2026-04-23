@@ -12,8 +12,6 @@ const BUILD_DATE = '2026-04-23T04:30:30.967Z';
 const CHANGELOG = `
 ICON REFRESH & SCREEN CONTROL
 
-ICON REFRESH & SCREEN CONTROL
-
 Add the new extension icon asset for the next release cycle.
 
 Add Idle Screen Timeout settings and runtime screen-off actions.
@@ -263,7 +261,7 @@ export default class BrightnessRestorePreferences extends ExtensionPreferences {
         const timeoutValues = [10, 60, 120, 300, 600, 900, 1800];
         const currentTimeout = settings.get_int('idle-timeout-seconds');
         let timeoutIndex = timeoutValues.indexOf(currentTimeout);
-        if (timeoutIndex < 0) timeoutIndex = 2; // Default to 5 minutes
+        if (timeoutIndex < 0) timeoutIndex = timeoutValues.indexOf(300); // Default to 5 minutes
         const idleTimeoutDropDown = new Gtk.DropDown({
             valign: Gtk.Align.CENTER,
             model: timeoutModel,
@@ -601,6 +599,7 @@ export default class BrightnessRestorePreferences extends ExtensionPreferences {
         const updateDebugVisibility = () => {
             const isDebug = settings.get_boolean('debug');
             const logToFile = settings.get_boolean('logtofile');
+            screenControlGroup.visible = isDebug;
             loggingGroup.visible = isDebug;
             logPathRow.visible = isDebug && logToFile;
             browseBtn.visible = isDebug && logToFile;
