@@ -59,12 +59,34 @@ LINT_DONE
 
 You can configure the extension using standard Gnome Extensions settings (or `dconf`).
 
+### General
+
 | Setting | Default | Description |
 | :--- | :--- | :--- |
 | **Restore on Startup** | `true` | Whether to restore the saved value on login. |
 | **Indicator Style** | `quick-settings` | `standalone` (Panel Button) or `quick-settings` (Pill). |
 | **Indicator Position** | `right` | `left`, `right`, or `default` (Only for Quick Settings). |
 | **Interval** | `2` | Internal update interval (debounced save). |
+| **Last Brightness** | `-1.0` | Last saved brightness value. `-1.0` means unset. |
+
+### Idle Screen Timeout
+
+| Setting | Default | Description |
+| :--- | :--- | :--- |
+| **Enable Idle Timeout** | `false` | Automatically blank the screen after the configured idle period. |
+| **Idle Duration** | `300` (`5 minutes`) | Time in seconds before the idle timeout triggers. |
+| **Timeout Action** | `overlay` | Screen blank method: `overlay` or `dbus`. |
+
+### Debug
+
+| Setting | Default | Description |
+| :--- | :--- | :--- |
+| **Enable Debug** | `false` | Enable debug-only controls and extra logging. |
+| **Log Level** | `1` | 0=Verbose, 1=Debug, 2=Info, 3=Warn, 4=Error. |
+| **Log to File** | `true` | Write debug logs to file. |
+| **Log File Path** | `''` | Custom path for the log file. Empty uses the default cache path. |
+| **Screen Test Action** | `overlay` | Manual screen blank test mode used by the debug Screen Control action. |
+| **Screen Test Sequence** | `0` | Internal counter incremented to request a new manual screen test. |
 
 ## Install
 
