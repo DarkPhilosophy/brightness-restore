@@ -26,8 +26,8 @@ It automatically saves your local brightness adjustments and restores them upon 
 <!-- LINT-RESULT-START -->
 ### Linting Status
 > **Status**: ✅ **Passing**  
-> **Last Updated**: 2026-04-23 04:30:32 UTC  
-> **Summary**: 0 errors, 24 warnings
+> **Last Updated**: 2026-04-23 04:44:55 UTC  
+> **Summary**: 0 errors, 0 warnings
 
 <details>
 <summary>Click to view full lint output</summary>
@@ -35,41 +35,6 @@ It automatically saves your local brightness adjustments and restores them upon 
 ```text
 > brightness-restore@4.0.0 lint:fix
 > eslint --fix extension .scripts --format stylish || true; echo LINT_DONE
-
-
-/home/runner/work/brightness-restore/brightness-restore/extension/library/idle-monitor.js
-   12:1  warning  Missing JSDoc @returns declaration                 jsdoc/require-returns
-   27:1  warning  Missing JSDoc @returns declaration                 jsdoc/require-returns
-   43:1  warning  Missing JSDoc @param "id" description              jsdoc/require-param-description
-   43:1  warning  Missing JSDoc @param "id" type                     jsdoc/require-param-type
-   69:1  warning  Missing JSDoc @param "activeCallback" description  jsdoc/require-param-description
-   69:1  warning  Missing JSDoc @param "activeCallback" type         jsdoc/require-param-type
-   95:1  warning  Missing JSDoc @param "timeoutSeconds" description  jsdoc/require-param-description
-   95:1  warning  Missing JSDoc @param "timeoutSeconds" type         jsdoc/require-param-type
-   96:1  warning  Missing JSDoc @param "idleCallback" description    jsdoc/require-param-description
-   96:1  warning  Missing JSDoc @param "idleCallback" type           jsdoc/require-param-type
-   97:1  warning  Missing JSDoc @param "activeCallback" description  jsdoc/require-param-description
-   97:1  warning  Missing JSDoc @param "activeCallback" type         jsdoc/require-param-type
-  129:1  warning  Missing JSDoc @returns declaration                 jsdoc/require-returns
-
-/home/runner/work/brightness-restore/brightness-restore/extension/library/indicators/screen-off-overlay.js
-  96:1  warning  Missing JSDoc @returns declaration  jsdoc/require-returns
-
-/home/runner/work/brightness-restore/brightness-restore/extension/library/screen-off.js
-  20:1  warning  Missing JSDoc @returns declaration       jsdoc/require-returns
-  22:1  warning  Missing JSDoc @param "mode" description  jsdoc/require-param-description
-  22:1  warning  Missing JSDoc @param "mode" type         jsdoc/require-param-type
-
-/home/runner/work/brightness-restore/brightness-restore/extension/library/toggle-mouse.js
-   5:1  warning  Missing JSDoc @returns declaration          jsdoc/require-returns
-  16:1  warning  Missing JSDoc @returns declaration          jsdoc/require-returns
-  28:1  warning  Missing JSDoc @returns declaration          jsdoc/require-returns
-  40:1  warning  Missing JSDoc @returns declaration          jsdoc/require-returns
-  42:1  warning  Missing JSDoc @param "visible" description  jsdoc/require-param-description
-  42:1  warning  Missing JSDoc @param "visible" type         jsdoc/require-param-type
-  52:1  warning  Missing JSDoc @returns declaration          jsdoc/require-returns
-
-✖ 24 problems (0 errors, 24 warnings)
 
 LINT_DONE
 ```
