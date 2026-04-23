@@ -8,7 +8,7 @@ import GLib from 'gi://GLib';
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 import * as Logger from './library/logger.js';
 
-const BUILD_DATE = '2026-04-23T05:04:59.535Z';
+const BUILD_DATE = '2026-04-23T05:35:19.700Z';
 const CHANGELOG = `
 ICON REFRESH & SCREEN CONTROL
 
