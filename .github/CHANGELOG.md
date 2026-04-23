@@ -1,10 +1,14 @@
 # Changelog
 
-## v4 (2026-04-13) - ICON REFRESH
+## v4 (2026-04-13 - 2026-04-16) - ICON REFRESH & SCREEN CONTROL
 
-> **ICON REFRESH**
+> **ICON REFRESH & SCREEN CONTROL**
 
 - Add the new extension icon asset for the next release cycle.
+- Add Idle Screen Timeout settings and runtime screen-off actions.
+- Add 10-second timeout option for fast testing from preferences.
+- Add manual Screen Control test path handled by the shell process.
+- Fix overlay and D-Bus wake/sleep behavior to avoid freezes and delayed triggers.
 
 ## v3 (2026-01-29) - PREFERENCES & LOGGING REFINEMENTS
 
